@@ -1,26 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {ChangeEvent, useEffect, useState} from "react";
+import "./App.css";
+import {doc, getDoc, setDoc} from "firebase/firestore";
+import {db} from "./firebase";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+	const [currentLink, setCurrentLink] = useState('')
+
+	const docRef = doc(db, "links", "boor");
+	useEffect(() => {
+		getDoc(docRef).then(res => {
+			console.log(res.data())
+		})
+
+	}, [])
+
+	const handleChangeCurrentLink = (e: ChangeEvent<HTMLInputElement>) => {
+		setCurrentLink(e.currentTarget.value)
+	}
+
+	const hanldeAdd = () => {
+		setDoc(doc(db, "links", "boor"), {links: [currentLink]}, {merge: false})
+			.then(res => {
+				console.log(res)
+			})
+	}
+
+	return (
+		<div className="App">
+			<input value={currentLink} onChange={handleChangeCurrentLink}/>
+			<button onClick={hanldeAdd}>test</button>
+		</div>
+	);
 }
 
 export default App;
